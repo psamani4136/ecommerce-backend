@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Layout from "../../core/Layout";
-import { API } from "../../config";
+import { signup } from "../../auth";
 
 const Signup = () => {
   const [values, setValues] = useState({
@@ -11,30 +12,14 @@ const Signup = () => {
     success: false,
   });
 
-  const { name, email, password, error, success } = values;
+  const { name, email, password, success, error } = values;
   const handleChange = (name) => (event) => {
     setValues({ ...values, error: false, [name]: event.target.value });
   };
 
-  const signup = (user) => {
-    return fetch(`${API}/signup`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const clickSubmit = (event) => {
     event.preventDefault();
+    setValues({ ...values, error: false });
     signup({ name, email, password }).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error, success: false });
@@ -98,8 +83,11 @@ const Signup = () => {
   );
 
   const showSuccess = () => (
-    <div className="alert alert-infor" style={{ display: error ? "" : "none" }}>
-      New account has been created. Please signin
+    <div
+      className="alert alert-info"
+      style={{ display: success ? "" : "none" }}
+    >
+      New account has been created. Please <Link to="/signin">Signin</Link>
     </div>
   );
 
